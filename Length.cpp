@@ -56,3 +56,11 @@ int main()
 	}
 	return 0;
 }
+//LENGTH RESCURSIVELY
+// int length(Node* head){
+//     if(head==NULL){
+//         return 0;
+//     }
+//     int len=1;
+//     return len+length(head->next);
+// }
