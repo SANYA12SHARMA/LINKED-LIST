@@ -66,9 +66,5 @@ int main()
     cin>>i>>d;
     head=insert(head,i,d);
     print(head);
-    int s;
-    cin>>s;
-    head=delet(head,s);
-    print(head);
     return 0;
 }
