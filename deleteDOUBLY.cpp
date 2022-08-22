@@ -69,11 +69,11 @@ void delhead(Node* &head,int position){
         head=temp->next;
         temp->next=NULL;
         delete temp;
-    }
-    Node* curr=head;
+    }else{
+           Node* curr=head;
     Node* prev=NULL;
     int cnt=0;
-    while(cnt<position-1){
+    while(cnt<position){
         cnt++;
         prev=curr;
         curr=curr->next;
@@ -81,7 +81,8 @@ void delhead(Node* &head,int position){
     curr->prev=NULL;
     prev->next=curr->next;
     curr->next=NULL;
-    delete curr;
+    delete curr; 
+    }
 
 }
 void print(Node* &head){
@@ -104,13 +105,14 @@ int main()
         int d;
         cin>>d;
         insertattail(head,tail,d);
-        print(head);
     }
     int position,d;
     cin>>position>>d;
     insertatpos(head,tail, position,d);
     print(head);
-    delhead(head,0);
+    int pos;
+    cin>>pos;
+    delhead(head,pos);
     print(head);
     return 0;
 }
