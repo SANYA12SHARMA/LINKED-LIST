@@ -3,64 +3,59 @@ using namespace std;
 class Node{
     public:
     int data;
-    Node* prev;
     Node* next;
+    Node* prev;
     Node(int data){
         this->data=data;
-        this->prev=NULL;
-        this->next=NULL;
+        next=NULL;
+        prev=NULL;
     }
 };
-void insertAtHead(Node* &tail,Node* &head,int data){
-    
+void insertathead(Node* &head,Node* &tail,int d){
     if(head==NULL){
-        Node* newnode=new Node(data);
+        Node* newnode=new Node(d);
         head=newnode;
         tail=newnode;
     }else{
-        Node* newnode=new Node(data);
-        newnode->next=head;
+    Node* newnode=new Node(d);
+    newnode->next=head;
     head->prev=newnode;
-    head=newnode;
-    }
+    head=newnode;}
 }
-void insertAtTail(Node* &tail,Node* &head,int data){
-    
-    if(tail==NULL){
-        Node* newnode=new Node(data);
-        tail=newnode;
+void insertattail(Node* &head,Node* &tail,int d){
+    if(head==NULL){
+        Node* newnode=new Node(d);
         head=newnode;
+        tail=newnode;
     }else{
-        Node* newnode=new Node(data);
-            tail->next=newnode;
+    Node* newnode=new Node(d);
+    tail->next=newnode;
     newnode->prev=tail;
-    tail=newnode;
-    }
-
+    tail=newnode;}
 }
-void insertAtposition(Node* &tail,Node* &head,int i,int data){
-    //insert at start
-    if(i==1){
-        insertAtHead(tail,head,data);
-        return ;
-    }
-    Node* temp=head;
-    int cnt=1;
-    while(cnt<i-1){
-        temp=temp->next;
-        cnt++;
-    }
-    if(temp->next==NULL){
-        insertAtTail(tail,head,data);
+void insertatpos(Node* &head,Node* &tail,int position,int d){
+    if(position==0){
+        insertathead(head,tail,d);
         return;
     }
+    Node* temp=head;
+    int cnt=0;
+    while(temp && cnt<position-1){
+        cnt++;
+        temp=temp->next;
 
-    Node* newnode=new Node(data);
-    newnode->next=temp->next;
-    temp->next->prev=newnode;
-    temp->next=newnode;
-    newnode->prev=temp;
-    
+    }
+    if(temp->next==NULL){
+        insertattail(head,tail,d);
+        return;
+    }
+        Node* newnode=new Node(d);
+        newnode->next=temp->next;
+        temp->next->prev=newnode;
+        newnode->prev=temp;
+        temp->next=newnode;
+
+
 }
 void print(Node* head){
     Node* temp=head;
@@ -70,19 +65,32 @@ void print(Node* head){
     }
     cout<<endl;
 }
+// int getlen(Node* head){
+//     int len=0;
+//     Node* temp=head;
+//     while(temp!=NULL){
+//         len++;
+//         temp=temp->next;
+//     }
+//     return len;
+// }
 int main()
 {
     Node* head=NULL;
     Node* tail=NULL;
-    insertAtHead(tail,head,13);
-    insertAtHead(tail,head,12);
-    insertAtHead(tail,head,8);
-    print(head);
-    insertAtTail(tail,head,25);
-    print(head);
-    int i;
-    cin>>i;
-    insertAtposition(tail,head,i,267);
+    // cout<<getlen(head)<<endl;
+    int n;
+    cin>>n;
+    while(n--){
+        int d;
+        cin>>d;
+        insertattail(head,tail,d);
+        print(head);
+    }
+    
+    int position,d;
+    cin>>position>>d;
+    insertatpos(head,tail, position,d);
     print(head);
     return 0;
 }
