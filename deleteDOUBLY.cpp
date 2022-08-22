@@ -3,96 +3,88 @@ using namespace std;
 class Node{
     public:
     int data;
-    Node* prev;
     Node* next;
+    Node* prev;
     Node(int data){
         this->data=data;
-        this->prev=NULL;
-        this->next=NULL;
+        next=NULL;
+        prev=NULL;
     }
     ~Node(){
         int val=this->data;
         if(next!=NULL){
             delete next;
-            next=NULL;
+             next=NULL;
         }
-        cout<<"Memory free for node with data"<<val<<endl;
+        cout<<"memory free for node with data"<<val<<endl;
     }
 };
-void insertAtHead(Node* &head,Node* &tail,int data){
+void insertathead(Node* &head,Node* &tail,int d){
     if(head==NULL){
-        Node* newnode=new Node(data);
+        Node* newnode=new Node(d);
         head=newnode;
         tail=newnode;
     }else{
-        Node* newnode=new Node(data);
-        newnode->next=head;
-        head->prev=newnode;
-        head=newnode;
-    }
+    Node* newnode=new Node(d);
+    newnode->next=head;
+    head->prev=newnode;
+    head=newnode;}
 }
-void insertAtTail(Node* &tail,Node* &head,int data){
-    if(tail==NULL){
-        Node* newnode=new Node(data);
-        tail=newnode;
+void insertattail(Node* &head,Node* &tail,int d){
+    if(head==NULL){
+        Node* newnode=new Node(d);
         head=newnode;
+        tail=newnode;
     }else{
-        Node* newnode=new Node(data);
-        tail->next=newnode;
-        newnode->prev=tail;
-        tail=newnode;
-    }
+    Node* newnode=new Node(d);
+    tail->next=newnode;
+    newnode->prev=tail;
+    tail=newnode;}
 }
-void insertAtposition(Node* &tail,Node* &head,int i,int data){
-    //insertAtstart
-    if(i==0){
-        insertAtHead(head,tail,data);
+void insertatpos(Node* &head,Node* &tail,int position,int d){
+    if(position==0){
+        insertathead(head,tail,d);
         return;
     }
     Node* temp=head;
     int cnt=0;
-    while(cnt<i-1){
+    while(temp && cnt<position-1){
         cnt++;
         temp=temp->next;
     }
-    //insertAtlast
     if(temp->next==NULL){
-        insertAtTail(tail,head,data);
+        insertattail(head,tail,d);
         return;
     }
-    Node* newnode=new Node(data);
-      newnode->next=temp->next;
-            temp->next->prev=newnode;
-            temp->next=newnode;
-            newnode->prev=temp;
-    
+        Node* newnode=new Node(d);
+        newnode->next=temp->next;
+        temp->next->prev=newnode;
+        newnode->prev=temp;
+        temp->next=newnode;
 }
-void deleteatpos(Node* &head,int pos){
-    if(pos==0){
+void delhead(Node* &head,int position){
+    if(position==0){
         Node* temp=head;
         temp->next->prev=NULL;
         head=temp->next;
         temp->next=NULL;
-        delete temp;   
-    }else{
-        //deleting any middle or last node
-        Node* curr=head;
-        Node* previous=NULL;
-        int cnt=0;
-        while(cnt<pos){
-            previous=curr;
-            curr=curr->next;
-            cnt++;
-        }
-        curr->prev=NULL;
-        previous->next=curr->next;
-        curr->next=NULL;
-        delete curr;
+        delete temp;
     }
+    Node* curr=head;
+    Node* prev=NULL;
+    int cnt=0;
+    while(cnt<position-1){
+        cnt++;
+        prev=curr;
+        curr=curr->next;
+    }
+    curr->prev=NULL;
+    prev->next=curr->next;
+    curr->next=NULL;
+    delete curr;
 
 }
-
-void print(Node* head){
+void print(Node* &head){
     Node* temp=head;
     while(temp!=NULL){
         cout<<temp->data<<"->";
@@ -100,22 +92,25 @@ void print(Node* head){
     }
     cout<<endl;
 }
+
 int main()
 {
     Node* head=NULL;
     Node* tail=NULL;
-  int n;
-  cin>>n;
-  while(n--){
-      int i,d;
-    cin>>i>>d;
-        insertAtposition(tail,head,i,d);
-  }
-cout<<"The linked list is as follows:"<<endl;
+    // cout<<getlen(head)<<endl;
+    int n;
+    cin>>n;
+    while(n--){
+        int d;
+        cin>>d;
+        insertattail(head,tail,d);
+        print(head);
+    }
+    int position,d;
+    cin>>position>>d;
+    insertatpos(head,tail, position,d);
     print(head);
-    int pos;
-    cin>>pos;
-    deleteatpos(head,pos);
+    delhead(head,0);
     print(head);
     return 0;
 }
