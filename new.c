@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 // Define a list of special characters
-const char* specialCharacterList = "!@#$%^&*()_-+=<>?/[]{}";
+const char* specialCharacterList = "!@$#%^&*?()";
 
 // Function to read and print the content of a file
 void read_file(const char *filename) {
