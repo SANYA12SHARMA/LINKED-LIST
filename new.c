@@ -28,6 +28,45 @@ void read_file(const char *filename) {
     fclose(filePointer);
 }
 
+// Function to get the index of a special character
+int special_character_idx(char c) {
+    int specialCharacterCount = strlen(specialCharacterList);
+    for (int i = 0; i < specialCharacterCount; i++) {
+        if (c == specialCharacterList[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Function to decrypt a character
+char decrypt_shift(char c, int shiftValue) 
+{
+    if (isalpha(c)) {
+        char base = isupper(c) ? 'A' : 'a';
+        return (c - base - shiftValue + 26) % 26 + base;
+    } else if (isdigit(c)) {
+        return '0' + ((c - '0' - shiftValue + 10) % 10);
+    } else {
+        int specialCharacterIndex = special_character_idx(c);
+        if (specialCharacterIndex == -1) {
+            return '\0';
+        } else {
+            return specialCharacterList[(specialCharacterIndex - shiftValue + strlen(specialCharacterList)) % strlen(specialCharacterList)];
+        }
+    }
+}
+
+
+// Function to decrypt a message 
+void decrypt(char givenMessage[], int shiftValue) {
+    int messageLength = strlen(givenMessage);
+
+    for (int i = 0; i < messageLength; i++) {
+        givenMessage[i] = decrypt_shift(givenMessage[i], shiftValue);
+    }
+}
+
 // Function to decrypt passwords from a file
 void decrypt_passwords() {
     FILE* inputFile = fopen("StorePasswords.txt", "r");
@@ -115,6 +154,25 @@ void decrypt_passwords() {
     fclose(outputFile);
 }
 
+
+// Function to encrypt a character by shifting it
+char encrypt_shift(char c, int shiftValue) 
+{
+    if (isalpha(c)) {
+        char base = isupper(c) ? 'A' : 'a';
+        return (c - base + shiftValue) % 26 + base;
+    } else if (isdigit(c)) {
+        return '0' + ((c - '0' + shiftValue) % 10);
+    } else {
+        int specialCharacterIndex = special_character_idx(c);
+        if (specialCharacterIndex == -1) {
+            return '\0';
+        } else {
+            return specialCharacterList[(specialCharacterIndex + shiftValue) % strlen(specialCharacterList)];
+        }
+    }
+}
+
 // Function to encrypt a given message and return the encrypted version
 char* encrypt(const char givenMessage[], int shiftValue) {
     int messageLength = strlen(givenMessage);
@@ -137,13 +195,31 @@ char* encrypt(const char givenMessage[], int shiftValue) {
     return encryptedMessage;
 }
 
-// Function to decrypt a message by shifting characters in the opposite direction
-void decrypt(char givenMessage[], int shiftValue) {
-    int messageLength = strlen(givenMessage);
-
-    for (int i = 0; i < messageLength; i++) {
-        givenMessage[i] = decrypt_shift(givenMessage[i], shiftValue);
+void encrypt_passwords(const char *ptr)
+{
+    FILE* file = fopen("StorePasswords.txt", "a");
+    if (file == NULL) {
+        printf("Failed to open store the file.\n");
+        return;
     }
+    // Encrypt the password and store it
+    fseek(file, 0, SEEK_END);
+    if(ftell(file)==0){
+        fputs("Encrypted passwords:\n",file);
+    }
+    char* encryptedPassword = encrypt(ptr, 3);
+
+    if (encryptedPassword != NULL) {
+        fputs(encryptedPassword, file);
+        fputs("\n", file);
+        free(encryptedPassword); // Free the memory allocated for the encrypted password
+    } else {
+        printf("Failed to encrypt the password.\n");
+    }
+
+    fclose(file);
+
+    printf("Password stored successfully.\n");
 }
 
 // Function to check if a password exists in a common passwords file
@@ -193,85 +269,4 @@ void ask_and_read(const char* message, const char* fileName) {
             printf("Invalid input. Please enter 'yes' (y/Y) or 'no' (n/N).\n");
         }
     } while (1); // Continue looping until valid input is received
-}
-
-// Function to get the index of a special character in the list
-int getSpecialCharacterIndex(char c) {
-    int specialCharacterCount = strlen(specialCharacterList);
-    for (int i = 0; i < specialCharacterCount; i++) {
-        if (c == specialCharacterList[i]) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-// Function to decrypt a character by shifting it in the opposite direction
-char decrypt_shift(char c, int shiftValue) 
-{
-    if (isalpha(c)) {
-        char base = isupper(c) ? 'A' : 'a';
-        return (c - base - shiftValue + 26) % 26 + base;
-    } else if (isdigit(c)) {
-        return '0' + ((c - '0' - shiftValue + 10) % 10);
-    } else {
-        int specialCharacterIndex = getSpecialCharacterIndex(c);
-        if (specialCharacterIndex == -1) {
-            return '\0';
-        } else {
-            return specialCharacterList[(specialCharacterIndex - shiftValue + strlen(specialCharacterList)) % strlen(specialCharacterList)];
-        }
-    }
-}
-
-// Function to encrypt a character by shifting it
-char encrypt_shift(char c, int shiftValue) 
-{
-    if (isalpha(c)) {
-        char base = isupper(c) ? 'A' : 'a';
-        return (c - base + shiftValue) % 26 + base;
-    } else if (isdigit(c)) {
-        return '0' + ((c - '0' + shiftValue) % 10);
-    } else {
-        int specialCharacterIndex = getSpecialCharacterIndex(c);
-        if (specialCharacterIndex == -1) {
-            return '\0';
-        } else {
-            return specialCharacterList[(specialCharacterIndex + shiftValue) % strlen(specialCharacterList)];
-        }
-    }
-}
-
-// Function to encrypt a given message and return the encrypted version
-char* encrypt(const char givenMessage[], int shiftValue) 
-{
-    int messageLength = strlen(givenMessage);
-
-    // Allocate memory for the encrypted message (including space for null terminator)
-    char* encryptedMessage = (char*)malloc((messageLength + 1) * sizeof(char));
-
-    if (encryptedMessage == NULL) {
-        printf("Memory allocation failed.\n");
-        return NULL;
-    }
-
-    for (int i = 0; i < messageLength; i++) {
-        encryptedMessage[i] = encrypt_shift(givenMessage[i], shiftValue);
-    }
-
-    // Add a null terminator to the end of the encrypted message
-    encryptedMessage[messageLength] = '\0';
-
-    return encryptedMessage;
-}
-
-// Function to decrypt a given message by shifting characters in the opposite direction
-void decrypt(char givenMessage[], int shiftValue) 
-{
-    int messageLength = strlen(givenMessage);
-
-    for (int i = 0; i < messageLength; i++) 
-	{
-        givenMessage[i] = decrypt_shift(givenMessage[i], shiftValue); // Decrypting is shifting in the opposite direction
-    }
 }
