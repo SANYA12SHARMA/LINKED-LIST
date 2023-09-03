@@ -270,3 +270,12 @@ void ask_and_read(const char* message, const char* fileName) {
         }
     } while (1); // Continue looping until valid input is received
 }
+
+void ask_user(){
+    // Ask and read the Encrypted passwords file
+    ask_and_read("Do you want to see Encrypted passwords?", "EncryptedPasswords.txt");
+
+    // Ask and read the Decrypted passwords file
+    ask_and_read("Do you want to see Decrypted passwords?", "DecryptedPasswords.txt");
+    return;
+}
